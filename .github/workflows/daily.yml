@@ -1,0 +1,25 @@
+name: Daily Contribution
+
+# 14:00 UTC = 7:30 PM IST, safely inside your day even with delays
+on:
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch: # allows manual run from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make today's contribution
+        run: |
+          echo "- Contribution on $(date '+%Y-%m-%d %H:%M %Z')" >> contributions.md
+          git config user.name "zcsaqueeb"
+          git config user.email "zcsaqueeb@users.noreply.github.com"
+          git add contributions.md
+          git commit -m "Daily contribution $(date +%F)" || echo "Nothing to commit"
+          git push
